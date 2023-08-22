@@ -7,7 +7,7 @@ import flet as ft
 
 # defining main function
 def main(page: ft.Page):
-    text = ft.Text(value="Hello, Anurag!", color="red")
+    text = ft.Text(value="Hello, Dev!", color="red")
     page.controls.append(text)
     page.update()
 
