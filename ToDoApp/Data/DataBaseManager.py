@@ -5,7 +5,6 @@ class DataBaseManager():
 
     def __init__(self):
         self.data_base_path = f'{os.path.dirname(__file__)}/tasks.db'
-        print(self.data_base_path)
 
     def create_table(self, query):
 
@@ -42,15 +41,51 @@ class DataBaseManager():
             cursor = conexion.cursor()            
 
             # Insertar los datos
-            inserted = cursor.execute(query, params)
+            cursor.execute(query, params)
+            last_inserted_id = cursor.lastrowid
 
             conexion.commit()
             conexion.close()
 
-            return inserted
+            return last_inserted_id
         
         except sql.Error as e:
             print("Error executing Insert", e)
+            return None
+    
+    def update(self, query, params):
+        try:
+            conexion = sql.connect(self.data_base_path)
+            cursor = conexion.cursor()            
+
+            # Actualizar los datos
+            cursor.execute(query, params)
+            rows_updated = cursor.rowcount
+
+            conexion.commit()
+            conexion.close()
+
+            return rows_updated
+        
+        except sql.Error as e:
+            print("Error executing Update", e)
+            return None
+        
+    def delete(self, query, params):
+        try:            
+            conexion = sql.connect(self.data_base_path)
+            cursor = conexion.cursor()            
+
+            # Eliminar los datos
+            deleted = cursor.execute(query, params)
+
+            conexion.commit()
+            conexion.close()
+
+            return deleted
+        
+        except sql.Error as e:
+            print("Error executing Delete", e)
             return None
 
 # dbm = DataBaseManager()
@@ -63,11 +98,10 @@ class DataBaseManager():
 #     )
 #     '''
 # )
-
 # task_list = [
-#         ("Completar informe", False),
-#         ("Hacer la compra", True),
-#         ("Ejercicio diario", False)
+#         (1, "Insert ok", False),
+#         (2, "Delete task", True),
+#         (3, "Ejercicio diario", False)
 #     ]
 # for task in task_list:
-#     dbm.insert("INSERT INTO tbl_tasks (name, completed) VALUES (?, ?)", (task[0], task[1]))
+#     dbm.insert("INSERT INTO tbl_tasks (id, name, completed) VALUES (?, ?, ?)", (task[0], task[1], task[2]))

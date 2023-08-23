@@ -1,18 +1,19 @@
 import flet as ft
+from ..Domain.TaskModel import TaskModel
 
 class TaskItem(ft.UserControl):
     
-    def __init__(self, task_name, task_status_change, task_delete, is_checked = False):
+    def __init__(self, task_data_model: TaskModel, on_status_change, on_delete, on_save):
         super().__init__()
-        self.completed = is_checked
-        self.task_name=task_name
-        self.task_status_change=task_status_change
-        self.task_delete=task_delete
+        self.task_data=task_data_model
+        self.on_status_change=on_status_change
+        self.on_delete=on_delete
+        self.on_save=on_save
 
     def build(self):
         self.display_task = ft.Checkbox(
-            label=self.task_name,
-            value=self.completed,
+            label=self.task_data.name,
+            value=self.task_data.completed,
             on_change=self.status_changed
             )
         self.edit_name = ft.TextField(width=350)
@@ -42,8 +43,8 @@ class TaskItem(ft.UserControl):
         return ft.Column(controls=[self.display_view, self.edit_view])
     
     def status_changed(self, e):
-        self.completed = self.display_task.value
-        self.task_status_change()
+        self.task_data.completed = self.display_task.value
+        self.on_status_change(self.task_data)
 
     def edit_click(self, e):
         self.display_view.visible=False
@@ -53,9 +54,11 @@ class TaskItem(ft.UserControl):
 
     def save_click(self, e):
         self.edit_view.visible=False
-        self.display_view.visible=True
-        self.display_task.label=self.edit_name.value        
+        self.display_view.visible=True        
+        self.task_data.name=self.edit_name.value
+        self.display_task.label=self.task_data.name
+        self.on_save(self.task_data)
         self.update()
 
     def delete_click(self, e):
-        self.task_delete(self)
+        self.on_delete(self)

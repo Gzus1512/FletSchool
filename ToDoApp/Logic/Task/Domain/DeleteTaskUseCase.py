@@ -1,7 +1,7 @@
 from Data.DataBaseRepository import DataBaseRepository as data_base_repository
 
-def get_tasks():
+def delete_task(task_id):
     dbr = data_base_repository()
-    tasks_model = dbr.get_tasks()
+    deleted = dbr.delete_task(task_id)
 
-    return tasks_model
+    return deleted
