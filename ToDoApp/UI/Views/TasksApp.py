@@ -90,16 +90,13 @@ class TasksApp(ft.UserControl):
         self.update()
 
     def add_click(self, e):
-        task_to_insert = TaskModel(name=self.text_field.value)
-        inserted_id = InsertUseCase.insert_task(task_to_insert)
+        task_to_show = InsertUseCase.insert_task(self.text_field.value)
         
-        if inserted_id is None:
+        if task_to_show is False:
             self.show_snackbar("Can not add task")
         else:
-            task_to_insert.id=inserted_id
-
             task = TaskItem(
-                task_data_model=task_to_insert,
+                task_data_model=task_to_show,
                 on_status_change=self.task_status_change,
                 on_delete=self.task_delete,
                 on_save=self.task_save_name

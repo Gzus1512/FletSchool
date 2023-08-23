@@ -27,13 +27,15 @@ class DataBaseManager():
             data = do_with_data(response)
 
             cursor.close()
-            conexion.close()
 
             return data
         
         except sql.Error as e:
             print("Error executing SELECT query", e)
             return None
+        
+        finally:
+            conexion.close()
     
     def insert(self, query, params):
         try:
@@ -45,13 +47,15 @@ class DataBaseManager():
             last_inserted_id = cursor.lastrowid
 
             conexion.commit()
-            conexion.close()
 
             return last_inserted_id
         
         except sql.Error as e:
             print("Error executing Insert", e)
             return None
+        
+        finally:
+            conexion.close()
     
     def update(self, query, params):
         try:
@@ -60,16 +64,20 @@ class DataBaseManager():
 
             # Actualizar los datos
             cursor.execute(query, params)
+
             rows_updated = cursor.rowcount
+            success = rows_updated > 0
 
             conexion.commit()
-            conexion.close()
 
-            return rows_updated
+            return success
         
         except sql.Error as e:
             print("Error executing Update", e)
-            return None
+            return False
+        
+        finally:
+            conexion.close()
         
     def delete(self, query, params):
         try:            
@@ -77,16 +85,20 @@ class DataBaseManager():
             cursor = conexion.cursor()            
 
             # Eliminar los datos
-            deleted = cursor.execute(query, params)
+            cursor.execute(query, params)
+
+            rows_deleted = cursor.rowcount
+            success = rows_deleted > 0
 
             conexion.commit()
-            conexion.close()
-
-            return deleted
+            return success
         
         except sql.Error as e:
             print("Error executing Delete", e)
-            return None
+            return False
+        
+        finally:
+            conexion.close()
 
 # dbm = DataBaseManager()
 # dbm.create_table(
